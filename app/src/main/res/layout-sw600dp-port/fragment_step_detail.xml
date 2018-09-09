@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/step_detail_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:tag="tablet_land"
+    android:padding="16dp">
+
+    <com.google.android.exoplayer2.ui.SimpleExoPlayerView
+        android:id="@+id/video_player"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_margin="8dp" />
+
+    <ImageView
+        android:id="@+id/step_video_thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="1dp"
+        android:paddingRight="16dp"
+        android:paddingLeft="0dp" />
+
+    <TextView
+        android:id="@+id/recipe_step_detail_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="70dp"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/recipe_previous_step"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:text="@string/previous_step" />
+
+        <Button
+            android:id="@+id/recipe_next_step"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:layout_margin="10dp"
+            android:text="@string/next_step"
+             />
+    </LinearLayout>
+</LinearLayout>
