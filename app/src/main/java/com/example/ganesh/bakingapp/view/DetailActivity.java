@@ -13,6 +13,7 @@ import com.example.ganesh.bakingapp.data.RecipeList;
 import com.example.ganesh.bakingapp.data.Step;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import  com.example.ganesh.bakingapp.data.BakingConsts;
 
@@ -20,38 +21,52 @@ public class DetailActivity extends AppCompatActivity implements RecipeDetailFra
 
     private ArrayList<RecipeList> recipeLists;
     RecipeList selectedRecipe;
+    private boolean isStepSelected;
+    private String recipeName;
+    private int stepSelected;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_detail);
-        Bundle bundle = getIntent().getExtras();
-        RecipeDetailFragment fragment = new RecipeDetailFragment();
-        fragment.setArguments(bundle);
-        recipeLists = bundle.getParcelableArrayList(BakingConsts.selected_recipie);
-        selectedRecipe = recipeLists.get(0);
-        if(selectedRecipe!=null){
-            getSupportActionBar().setTitle(selectedRecipe.getName());
-        }
-        getSupportFragmentManager().beginTransaction().replace(R.id.container,fragment)
-                .commit();
 
-        if(findViewById(R.id.detail_layout)!=null && findViewById(R.id.detail_layout).getTag().equals("tablet-land")){
-            StepDetailFragment step_fragment = new StepDetailFragment();
-            Bundle step_bundle = new Bundle();
-            step_bundle.putInt(BakingConsts.selected_step_number,0);
-            step_bundle.putParcelable(BakingConsts.selected_recipie,selectedRecipe);
-            step_fragment.setArguments(step_bundle);
-            getSupportFragmentManager().beginTransaction().replace(R.id.container2,step_fragment)
-                    .addToBackStack("StepSelected")
+
+        setContentView(R.layout.activity_detail);
+        if(savedInstanceState == null) {
+            Bundle bundle = getIntent().getExtras();
+            RecipeDetailFragment fragment = new RecipeDetailFragment();
+            fragment.setArguments(bundle);
+            recipeLists = bundle.getParcelableArrayList(BakingConsts.selected_recipie);
+            selectedRecipe = recipeLists.get(0);
+            recipeName = selectedRecipe.getName();
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment)
                     .commit();
+
+            if (findViewById(R.id.detail_layout) != null && findViewById(R.id.detail_layout).getTag().equals("tablet-land")) {
+                startStepFragment(0, true);
+            }
+        } else {
+            recipeName = savedInstanceState.getString(BakingConsts.selected_recipie);
         }
+        if (selectedRecipe != null) {
+            getSupportActionBar().setTitle(recipeName);
+        }
+
     }
 
+    private void startStepFragment(int stepNumber,boolean tablet){
+        StepDetailFragment step_fragment = new StepDetailFragment();
+        Bundle step_bundle = new Bundle();
+        step_bundle.putInt(BakingConsts.selected_step_number,stepNumber);
+        step_bundle.putParcelable(BakingConsts.selected_recipie,selectedRecipe);
+        step_bundle.putString("Recipe Name",selectedRecipe.getName());
+        step_fragment.setArguments(step_bundle);
+        getSupportFragmentManager().beginTransaction().replace(tablet ? R.id.container2:R.id.container,step_fragment)
+                .commit();
+    }
 
     @Override
     public void onSaveInstanceState(Bundle outState, PersistableBundle outPersistentState) {
-        outState.putParcelableArrayList(BakingConsts.selected_recipie,recipeLists);
         super.onSaveInstanceState(outState, outPersistentState);
+        outState.putString(BakingConsts.selected_recipie,recipeName);
     }
 
     @Override
@@ -60,20 +75,22 @@ public class DetailActivity extends AppCompatActivity implements RecipeDetailFra
     }
 
     @Override
-    public void onStepSelected(int stepNumber) {
+    public void onStepSelected(int stepNumber, List<Step> mSteps,String recipeName) {
+        isStepSelected = true;
+        stepSelected = stepNumber;
         StepDetailFragment fragment = new StepDetailFragment();
         Bundle bundle = new Bundle();
+
         bundle.putInt(BakingConsts.selected_step_number,stepNumber);
-        bundle.putParcelable(BakingConsts.selected_recipie,selectedRecipe);
+        bundle.putParcelableArrayList(BakingConsts.selected_recipie_steps,(ArrayList<Step>)mSteps);
+        bundle.putString("Recipe Name",recipeName);
         fragment.setArguments(bundle);
         if(findViewById(R.id.detail_layout)!=null && findViewById(R.id.detail_layout).getTag().equals("tablet-land")) {
             getSupportFragmentManager().beginTransaction().replace(R.id.container2,fragment)
-                    .addToBackStack("StepSelected")
                     .commit();
         }
         else {
             getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment)
-                    .addToBackStack("StepSelected")
                     .commit();
         }
     }

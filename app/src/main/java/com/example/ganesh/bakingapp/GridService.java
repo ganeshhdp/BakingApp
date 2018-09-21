@@ -44,7 +44,6 @@ public class GridService extends RemoteViewsService {
 
         @Override
         public void onDataSetChanged() {
-            System.out.println("ganesh lanka in the onDataSetChanged");
 //            mRemoteViewingredientsList =BakingWidget .getIngredientsList();
             recipeList = BakingWidget.getRecipelist();
         }
@@ -56,20 +55,15 @@ public class GridService extends RemoteViewsService {
 
         @Override
         public int getCount() {
- //           System.out.println("ganesh lanka lanka in the getCount of the gridview");
-   //
             return recipeList.size();
-//                     return mRemoteViewingredientsList.size();
-            //return 1;
         }
 
         @Override
         public RemoteViews getViewAt(int i) {
-            System.out.println("ganesh lanka lanka lanka in the getViewAt");
+
             RemoteViews views = new RemoteViews(mContext.getPackageName(),
                     R.layout.widget_grid_item);
             views.setTextViewText(R.id.widget_grid_view_item, recipeList.get(i).getName());
-  //          views.setTextViewText(R.id.widget_grid_view_item,"ganesh kanka");
             Intent fillInIntent = new Intent();
             Bundle bundle = new Bundle();
             ArrayList<RecipeList> recipeLists = new ArrayList<>();

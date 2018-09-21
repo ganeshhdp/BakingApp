@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
 import com.google.android.exoplayer2.util.Util;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,15 +58,18 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
     private SimpleExoPlayerView mExoPlayerView;
     private SimpleExoPlayer mExoPlayer;
     private Step selectedStep;
+    private List<Step> mSelectedSteps;
     private int selectedStepNumber;
     TextView textDescription;
 
-    private RecipeList selectedRecipe;
     private Handler mHandler;
+    DetailActivity mStepSelectedListener;
     private DefaultBandwidthMeter mDefaultBandwidthMeter;
     private Button previousButton;
     private Button nextButton;
+    private RecipeList selectedRecipe;
     private View convertView;
+    private String recipeName;
 
     public StepDetailFragment() {
         // Required empty public constructor
@@ -73,6 +78,8 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putParcelable("Selected Step",selectedStep);
+        outState.putParcelableArrayList(BakingConsts.selected_recipie_steps,(ArrayList<Step>)mSelectedSteps);
+        outState.putString("Recipe Name",this.recipeName);
         super.onSaveInstanceState(outState);
     }
 
@@ -102,20 +109,36 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for
-
+        mStepSelectedListener = (DetailActivity)getActivity();
         if(savedInstanceState!=null){
             selectedStep = savedInstanceState.getParcelable("Selected Step");
+            mSelectedSteps = savedInstanceState.getParcelableArrayList(BakingConsts.selected_recipie_steps);
+            recipeName = savedInstanceState.getString("Recipe Name");
         }
         else {
-            selectedStepNumber = getArguments().getInt(BakingConsts.selected_step_number);
-            selectedRecipe = getArguments().getParcelable(BakingConsts.selected_recipie);
-            selectedStep = selectedRecipe.getSteps().get(selectedStepNumber);
+            mSelectedSteps = getArguments().getParcelableArrayList(BakingConsts.selected_recipie_steps);
+            this.recipeName = getArguments().getString("Recipe Name");
+            if(mSelectedSteps == null){
+                selectedRecipe = getArguments().getParcelable(BakingConsts.selected_recipie);
+                selectedStepNumber = 0;
+                mSelectedSteps = selectedRecipe.getSteps();
+
+            }
+            else {
+                selectedStepNumber = getArguments().getInt(BakingConsts.selected_step_number);
+            }
+            selectedStep = mSelectedSteps.get(selectedStepNumber);
         }
+        ((DetailActivity)getActivity()).getSupportActionBar().setTitle(this.recipeName);
         View convertView =  inflater.inflate(R.layout.fragment_step_detail, container, false);
         textDescription = (TextView)convertView.findViewById(R.id.recipe_step_detail_text);
         previousButton = (Button)convertView.findViewById(R.id.recipe_previous_step);
@@ -155,7 +178,6 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
             }
         }
         else {
-            System.out.println("ganesh lanka with video none");
             mExoPlayerView.setVisibility(View.GONE);
             return;
         }
@@ -212,19 +234,19 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
     @Override
     public void onClick(View view) {
         int new_step_number = 0;
-        int number_of_steps = selectedRecipe.getSteps().size();
+        int number_of_steps = mSelectedSteps.size();
         switch(view.getId()){
             case R.id.recipe_previous_step:
                 if(selectedStepNumber < number_of_steps){
                     selectedStepNumber = selectedStepNumber - 1;
                 }
-                if(new_step_number < 0){
+                if(selectedStepNumber < 0){
                     selectedStepNumber = number_of_steps -1;
                 }
                 break;
 
             case R.id.recipe_next_step:
-                if(selectedStepNumber <selectedRecipe.getSteps().size()){
+                if(selectedStepNumber < number_of_steps){
                     selectedStepNumber = selectedStepNumber + 1;
                 }
                 if(selectedStepNumber == number_of_steps){
@@ -232,22 +254,7 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
                 }
                 break;
         }
-        StepDetailFragment fragment = new StepDetailFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt(BakingConsts.selected_step_number,selectedStepNumber);
-        bundle.putParcelable(BakingConsts.selected_recipie,selectedRecipe);
-        fragment.setArguments(bundle);
-
-        if(this.convertView!=null && this.convertView.getTag().equals("tablet_land")) {
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container2,fragment)
-                    .addToBackStack("StepSelected")
-                    .commit();
-        }
-        else {
-            getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment)
-                    .addToBackStack("StepSelected")
-                    .commit();
-        }
+        mStepSelectedListener.onStepSelected(selectedStepNumber,mSelectedSteps,recipeName);
     }
 
     /**

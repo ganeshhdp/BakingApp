@@ -12,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.ganesh.bakingapp.IdlingResource.IdlingTestResource;
 import com.example.ganesh.bakingapp.R;
 import com.example.ganesh.bakingapp.adapter.RecipeListAdapter;
 import com.example.ganesh.bakingapp.data.BakingJsonUtils;
@@ -97,6 +98,11 @@ public class RecipeListFragment extends Fragment {
         }
         recipeListView.setLayoutManager(layoutManager);
 
+        final IdlingTestResource idlingResource = ((RecipieListActivity)getActivity()).getIdlingResource();
+
+        if (idlingResource != null) {
+            idlingResource.setIdleState(false);
+        }
         final Call<ArrayList<RecipeList>> recipeList = BakingJsonUtils.getRecipe().getRecipeList();
         recipeList.enqueue(new Callback<ArrayList<RecipeList>>() {
             @Override
@@ -107,6 +113,9 @@ public class RecipeListFragment extends Fragment {
 
                 adapter.setRecipeData(recipeLists,getContext());
                 BakingService.startBakingService(getContext(),recipeLists);
+                if (idlingResource != null) {
+                    idlingResource.setIdleState(true);
+                }
             }
 
             @Override

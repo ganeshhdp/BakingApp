@@ -23,7 +23,7 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
 
 
     public interface StepClickListener {
-        public void onStepSelected(int stepNumber);
+        public void onStepSelected(int stepNumber,List<Step> recipeSteps ,String recipeName);
     }
 
     public void setStepClickListener(StepClickListener mStepClickListener) {
@@ -32,6 +32,7 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
 
     StepClickListener mStepClickListener;
     List<Step> mRecipeSteps;
+    String recipeName;
 
     public class RecipeStepListHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
@@ -48,7 +49,7 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
 
         @Override
         public void onClick(View view) {
-            mStepClickListener.onStepSelected(getAdapterPosition());
+            mStepClickListener.onStepSelected(getAdapterPosition(),mRecipeSteps,recipeName);
         }
     }
     @Override
@@ -76,8 +77,9 @@ public class RecipeStepAdapter extends RecyclerView.Adapter<RecipeStepAdapter.Re
         return 0;
     }
 
-    public void stepReceipeData(List<Step> selectedSteps){
+    public void stepReceipeData(List<Step> selectedSteps,String recipeName){
         this.mRecipeSteps = selectedSteps;
+        this.recipeName = recipeName;
         notifyDataSetChanged();
     }
 }

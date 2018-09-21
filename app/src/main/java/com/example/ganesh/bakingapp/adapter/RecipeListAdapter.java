@@ -79,7 +79,6 @@ public class RecipeListAdapter extends RecyclerView.Adapter<RecipeListAdapter.Re
 
         @Override
         public void onClick(View view) {
-            System.out.println("ganesh in the onClick of the recipelistadapter with position::"+recipeLists.get(getAdapterPosition()).getSteps());
             mClickListener.onRecipeListSelected(recipeLists.get(getAdapterPosition()));
         }
     }

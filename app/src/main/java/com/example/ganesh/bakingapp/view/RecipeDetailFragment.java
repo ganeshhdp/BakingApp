@@ -41,6 +41,7 @@ public class RecipeDetailFragment extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    ArrayList<RecipeList> recipeLists;
 
     private RecipeList selectedRecipe;
     public RecipeDetailFragment() {
@@ -80,8 +81,13 @@ public class RecipeDetailFragment extends Fragment {
         // Inflate the layout for this fragment
         View convertView = inflater.inflate(R.layout.fragment_recipe_detail, container, false);
         RecyclerView recipeListView = (RecyclerView)convertView.findViewById(R.id.recipe_step_list);
-        ArrayList<RecipeList> recipeLists = getArguments().getParcelableArrayList(BakingConsts.selected_recipie);
+        if(savedInstanceState!=null){
+            recipeLists = savedInstanceState.getParcelableArrayList(BakingConsts.SELECTED_RECIPES);
+        }else {
+            recipeLists = getArguments().getParcelableArrayList(BakingConsts.selected_recipie);
+        }
         selectedRecipe = recipeLists.get(0);
+        ((DetailActivity)getActivity()).getSupportActionBar().setTitle(selectedRecipe.getName());
         ArrayList<String> recipeIngredients = new ArrayList<>();
         if(selectedRecipe!=null) {
             final RecipeStepAdapter adapter = new RecipeStepAdapter((DetailActivity) getActivity());
@@ -103,7 +109,7 @@ public class RecipeDetailFragment extends Fragment {
             }
             recipeListView.setAdapter(adapter);
             adapter.setStepClickListener((DetailActivity) getActivity());
-            adapter.stepReceipeData(selectedRecipe.getSteps());
+            adapter.stepReceipeData(selectedRecipe.getSteps(),selectedRecipe.getName());
         }
         RecyclerView.LayoutManager layoutManager;
         layoutManager = new LinearLayoutManager(getContext());
@@ -134,6 +140,13 @@ public class RecipeDetailFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(BakingConsts.SELECTED_RECIPES, recipeLists);
+
+        super.onSaveInstanceState(outState);
     }
 
     /**

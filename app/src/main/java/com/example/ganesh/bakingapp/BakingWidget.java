@@ -33,7 +33,7 @@ public class BakingWidget extends AppWidgetProvider {
                                 int appWidgetId) {
         RemoteViews views = new RemoteViews(context.getPackageName(),
                 R.layout.widget_grid_view);
-        System.out.println("ganesh lanka in the updateAppWidget");
+
         Intent appIntent = new Intent(context, DetailActivity.class);
         appIntent.addCategory(Intent.CATEGORY_LAUNCHER);
         appIntent.addCategory(Intent.ACTION_MAIN);

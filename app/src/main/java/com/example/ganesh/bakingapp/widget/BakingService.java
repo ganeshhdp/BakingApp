@@ -54,7 +54,7 @@ public class BakingService extends IntentService {
     }
 
     private void handleActionUpdateBakingWidgets(ArrayList<RecipeList> RecipeList) {
-        System.out.println("ganesh lanka in the handleActionUpdateBakingWidgets");
+
         BakingWidget.updateWidgetDetails(this,RecipeList);
         /*Intent intent = new Intent("android.appwidget.action.APPWIDGET_UPDATE2");
         intent.putExtra("Activity_Ingredient_list", fromActivityIngredientsList);
