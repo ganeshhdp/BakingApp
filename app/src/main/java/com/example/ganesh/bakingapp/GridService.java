@@ -16,7 +16,7 @@ import java.util.List;
 
 public class GridService extends RemoteViewsService {
     List<String> mRemoteViewingredientsList;
-    ArrayList<RecipeList> recipeList;
+    ArrayList<String> ingridentList;
 
     public GridService() {
     }
@@ -45,7 +45,7 @@ public class GridService extends RemoteViewsService {
         @Override
         public void onDataSetChanged() {
 //            mRemoteViewingredientsList =BakingWidget .getIngredientsList();
-            recipeList = BakingWidget.getRecipelist();
+            ingridentList = BakingWidget.getIngridentList();
         }
 
         @Override
@@ -55,7 +55,7 @@ public class GridService extends RemoteViewsService {
 
         @Override
         public int getCount() {
-            return recipeList.size();
+            return ingridentList.size();
         }
 
         @Override
@@ -63,13 +63,13 @@ public class GridService extends RemoteViewsService {
 
             RemoteViews views = new RemoteViews(mContext.getPackageName(),
                     R.layout.widget_grid_item);
-            views.setTextViewText(R.id.widget_grid_view_item, recipeList.get(i).getName());
+            views.setTextViewText(R.id.widget_grid_view_item, ingridentList.get(i));
             Intent fillInIntent = new Intent();
-            Bundle bundle = new Bundle();
+           /* Bundle bundle = new Bundle();
             ArrayList<RecipeList> recipeLists = new ArrayList<>();
-            recipeLists.add(recipeList.get(i));
+            recipeLists.add(ingridentList.get(i));
             bundle.putParcelableArrayList(BakingConsts.selected_recipie,recipeLists);
-            fillInIntent.putExtras(bundle);
+            fillInIntent.putExtras(bundle);*/
             views.setOnClickFillInIntent(R.id.widget_grid_view_item, fillInIntent);
 
             return views;        }

@@ -114,7 +114,7 @@ public class RecipeDetailFragment extends Fragment {
         RecyclerView.LayoutManager layoutManager;
         layoutManager = new LinearLayoutManager(getContext());
         recipeListView.setLayoutManager(layoutManager);
-//        BakingService.startBakingService(getContext(),recipeIngredients);
+        BakingService.startBakingService(getContext(),recipeIngredients);
         return convertView;
     }
 

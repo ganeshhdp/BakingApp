@@ -17,6 +17,7 @@ import com.example.ganesh.bakingapp.R;
 import com.example.ganesh.bakingapp.data.BakingConsts;
 import com.example.ganesh.bakingapp.data.RecipeList;
 import com.example.ganesh.bakingapp.data.Step;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
@@ -70,7 +71,7 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
     private RecipeList selectedRecipe;
     private View convertView;
     private String recipeName;
-
+    private Long mSavedPosition = C.TIME_UNSET;
     public StepDetailFragment() {
         // Required empty public constructor
     }
@@ -80,6 +81,8 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
         outState.putParcelable("Selected Step",selectedStep);
         outState.putParcelableArrayList(BakingConsts.selected_recipie_steps,(ArrayList<Step>)mSelectedSteps);
         outState.putString("Recipe Name",this.recipeName);
+        outState.putLong(BakingConsts.SELECTED_POSITION, mSavedPosition);
+
         super.onSaveInstanceState(outState);
     }
 
@@ -123,6 +126,7 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
             selectedStep = savedInstanceState.getParcelable("Selected Step");
             mSelectedSteps = savedInstanceState.getParcelableArrayList(BakingConsts.selected_recipie_steps);
             recipeName = savedInstanceState.getString("Recipe Name");
+            mSavedPosition = savedInstanceState.getLong(BakingConsts.SELECTED_POSITION, C.TIME_UNSET);
         }
         else {
             mSelectedSteps = getArguments().getParcelableArrayList(BakingConsts.selected_recipie_steps);
@@ -135,6 +139,7 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
             }
             else {
                 selectedStepNumber = getArguments().getInt(BakingConsts.selected_step_number);
+                mSavedPosition = getArguments().getLong(BakingConsts.SELECTED_POSITION, C.TIME_UNSET);
             }
             selectedStep = mSelectedSteps.get(selectedStepNumber);
         }
@@ -174,6 +179,7 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
                         new DefaultDataSourceFactory(getContext(), userAgent),
                         new DefaultExtractorsFactory(), null, null);
                 mExoPlayer.prepare(mediaSource);
+                mExoPlayer.seekTo(mSavedPosition);
                 mExoPlayer.setPlayWhenReady(true);
             }
         }
@@ -187,6 +193,7 @@ public class StepDetailFragment extends Fragment implements View.OnClickListener
     public void onPause() {
         super.onPause();
         if (mExoPlayer != null) {
+            mSavedPosition = mExoPlayer.getCurrentPosition();
             mExoPlayer.stop();
             mExoPlayer.release();
             mExoPlayer = null;

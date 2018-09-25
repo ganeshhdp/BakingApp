@@ -37,25 +37,25 @@ public class BakingService extends IntentService {
      * @see IntentService
      */
 
-    public static void startBakingService(Context context, ArrayList<RecipeList> RecipeList) {
+    public static void startBakingService(Context context, ArrayList<String> IngridentList) {
         Intent intent = new Intent(context, BakingService.class);
-        intent.putExtra("Activity_Ingredient_list", RecipeList);
+        intent.putExtra("Activity_Ingredient_list", IngridentList);
         context.startService(intent);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
-            ArrayList<RecipeList> RecipeSelected =
-                    intent.getExtras().getParcelableArrayList(
+            ArrayList<String> IngridentList =
+                    intent.getExtras().getStringArrayList(
                             "Activity_Ingredient_list");
-            handleActionUpdateBakingWidgets(RecipeSelected);
+            handleActionUpdateBakingWidgets(IngridentList);
         }
     }
 
-    private void handleActionUpdateBakingWidgets(ArrayList<RecipeList> RecipeList) {
+    private void handleActionUpdateBakingWidgets(ArrayList<String> IngridentList) {
 
-        BakingWidget.updateWidgetDetails(this,RecipeList);
+        BakingWidget.updateWidgetDetails(this,IngridentList);
         /*Intent intent = new Intent("android.appwidget.action.APPWIDGET_UPDATE2");
         intent.putExtra("Activity_Ingredient_list", fromActivityIngredientsList);
         sendBroadcast(intent);*/

@@ -7,4 +7,6 @@ public class BakingConsts {
     public static String selected_recipie_steps = "Selected Recipie Steps";
 
     public static String selected_step_number = "Selected step number";
+
+    public static String SELECTED_POSITION = "Selected position";
 }

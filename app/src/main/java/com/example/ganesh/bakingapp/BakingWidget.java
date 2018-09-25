@@ -20,11 +20,11 @@ import java.util.ArrayList;
 public class BakingWidget extends AppWidgetProvider {
     static ArrayList<String> ingredientsList = new ArrayList<>();
 
-    public static ArrayList<RecipeList> getRecipelist() {
-        return recipelist;
+    public static ArrayList<String> getIngridentList() {
+        return ingridentList;
     }
 
-    static ArrayList<RecipeList> recipelist;
+    static ArrayList<String> ingridentList;
 
 
 
@@ -67,12 +67,12 @@ public class BakingWidget extends AppWidgetProvider {
 
 
 
-    public static  void updateWidgetDetails(Context context, ArrayList<RecipeList> RecipeSelected){
+    public static  void updateWidgetDetails(Context context, ArrayList<String> IngridentList){
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
                 new ComponentName(context, BakingWidget.class));
-        recipelist = RecipeSelected;
+        ingridentList = IngridentList;
 //        ingredientsList = fromActivityIngredientsList;
         appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.widget_grid_view);
         BakingWidget.updateBakingWidgets(context, appWidgetManager, appWidgetIds);

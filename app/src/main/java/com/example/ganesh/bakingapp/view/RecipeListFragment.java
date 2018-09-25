@@ -112,7 +112,7 @@ public class RecipeListFragment extends Fragment {
                 recipeLists = response.body();
 
                 adapter.setRecipeData(recipeLists,getContext());
-                BakingService.startBakingService(getContext(),recipeLists);
+                //BakingService.startBakingService(getContext(),recipeLists);
                 if (idlingResource != null) {
                     idlingResource.setIdleState(true);
                 }
